@@ -1,0 +1,41 @@
+{
+  "name": "getting-started-onchain",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "NODE_OPTIONS='--max-http-header-size=24576' next dev -p 3001 & nodemon --watch groups.ts --exec 'yarn deploy-local && yarn compute-tree'",
+    "build": "next build",
+    "start": "NODE_OPTIONS='--max-http-header-size=24576' next start",
+    "lint": "next lint",
+    "register-root": "cast rpc anvil_impersonateAccount 0xCA0583A6682607282963d3E2545Cd2e75697C2bb && cast send 0x5449Cc7A7E4024a7192d70c9Ce60Bb823993fd81 --rpc-url http://127.0.0.1:8545/ --from 0xCA0583A6682607282963d3E2545Cd2e75697C2bb 'registerRoot(uint256)'",
+    "compute-tree": "npx ts-node script/tree/compute-tree.ts",
+    "anvil": "anvil --fork-url https://rpc.ankr.com/polygon_mumbai",
+    "deploy-local": "yarn deploy-airdrop-0-contract && yarn deploy-airdrop-1-contract && yarn deploy-airdrop-2-contract && yarn generate-abi",
+    "generate-abi": "script/bash/generate-abi.sh",
+    "deploy-airdrop-0-contract": "forge script DeployAirdropLevel0 --rpc-url http://localhost:8545 -vv --mnemonics 'test test test test test test test test test test test junk' --sender '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266' --broadcast",
+    "deploy-airdrop-1-contract": "forge script DeployAirdropLevel1 --rpc-url http://localhost:8545 -vv --mnemonics 'test test test test test test test test test test test junk' --sender '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266' --broadcast",
+    "deploy-airdrop-2-contract": "forge script DeployAirdropLevel2 --rpc-url http://localhost:8545 -vv --mnemonics 'test test test test test test test test test test test junk' --sender '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266' --broadcast"
+  },
+  "dependencies": {
+    "@sismo-core/hydra-s2": "^1.0.0",
+    "@sismo-core/sismo-connect-react": "^0.0.11",
+    "@sismo-core/sismo-connect-server": "^0.0.10",
+    "@types/node": "18.15.11",
+    "@types/react": "18.0.34",
+    "@types/react-dom": "18.0.11",
+    "axios": "^1.3.5",
+    "eslint": "8.38.0",
+    "eslint-config-next": "13.3.0",
+    "ethers": "^5.5.4",
+    "next": "13.3.0",
+    "nodemon": "^2.0.22",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "styled-components": "^5.3.9",
+    "typescript": "5.0.4",
+    "viem": "^0.3.2"
+  },
+  "devDependencies": {
+    "@types/styled-components": "^5.1.26"
+  }
+}
