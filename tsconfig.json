@@ -4,7 +4,8 @@
     // same as the --compilerOptions flag
     // it is useful to call the compute-tree.ts script
     "compilerOptions": {
-      "module": "commonjs"
+      "module": "commonjs",
+      "target": "ES2020"
     }
   },
   "compilerOptions": {

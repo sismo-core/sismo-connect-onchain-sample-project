@@ -16,7 +16,7 @@ contract AirdropLevel2Test is BaseTest {
     airdropLevel2 = new AirdropLevel2({name: "My airdropLevel2 contract", symbol: "AIR2", appId: APP_ID, groupId: GROUP_ID, groupId2: GROUP_ID_2});
   }
 
-  function test_AirdropLevel0() public {
+  function test_AirdropLevel2() public {
 
     // we register the dev tree root 
     // when we create a proof from an address that is eligible thanks to the devMode configuration

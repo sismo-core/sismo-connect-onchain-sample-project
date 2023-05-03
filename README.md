@@ -20,19 +20,13 @@ yarn
 forge install
 ```
 
-### Launch your local fork
+### Launch your local fork by working Mumbai with Anvil
 
 ```bash
 # start a local blockchain with mumbai fork
 yarn anvil
 # this triggers this anvil command behind the scene
 # `anvil --fork-url https://rpc.ankr.com/polygon_mumbai`
-
-# start a local blockchain with goerli fork
-anvil --fork-url https://rpc.ankr.com/eth_goerli
-
-# you can also use the rpc url you want by passing an environment variable
-anvil --fork-url $RPC_URL
 ```
 
 ### Start your local Next.js app
@@ -49,7 +43,7 @@ The frontend is now available on http://localhost:3001/ and the contracts have b
 You can now experiment the user flow by going to your local frontend http://localhost:3001/.
 
 As you will see, the app showcase simple examples on how to create gated airdrops with Sismo Connect.
-To be eligible for the airdrops, you just need to add your address in [`./groups.ts`](./groups.ts):
+To be eligible for the airdrops, you just need to add your address in [`./config.ts`](./config.ts):
 
 ```ts
 // Replace with your address to become eligible for the airdrops

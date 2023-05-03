@@ -1,9 +1,7 @@
 import { KVMerkleTree, MerkleTreeData, SNARK_FIELD, buildPoseidon } from "@sismo-core/hydra-s2";
-import { ethers, BigNumber, BigNumberish } from "ethers";
-import fs from "fs";
-import path from "path";
-import { devGroups } from "../../groups";
+import { devGroups } from "../../config";
 import { exec } from "child_process";
+import { encodePacked, stringToHex, toHex } from "viem";
 
 export type OffchainGetAccountsTreeInputs = {
   groupId: string;
@@ -16,7 +14,7 @@ export type DevGroup = {
   data: DevAddresses;
 };
 
-export type DevAddresses = string[] | Record<string, Number | BigNumberish>;
+export type DevAddresses = string[] | Record<string, Number | BigInt>;
 
 export class DevRegistryTreeReader {
   private _devGroups: DevGroup[];
@@ -88,15 +86,15 @@ export class DevRegistryTreeReader {
 
     const encodedTimestamp =
       timestamp === "latest"
-        ? BigNumber.from(ethers.utils.formatBytes32String("latest")).shr(128)
-        : BigNumber.from(timestamp);
+        ? BigInt(stringToHex("latest", { size: 32 })) >> 128n
+        : BigInt(timestamp);
 
-    const groupSnapshotId = ethers.utils.solidityPack(
+    const groupSnapshotId = encodePacked(
       ["uint128", "uint128"],
-      [groupId, encodedTimestamp]
+      [BigInt(groupId), encodedTimestamp]
     );
 
-    const accountsTreeValue = BigNumber.from(groupSnapshotId).mod(SNARK_FIELD).toHexString();
+    const accountsTreeValue = toHex(BigInt(groupSnapshotId) % BigInt(SNARK_FIELD.toHexString()));
     return accountsTreeValue;
   };
 }

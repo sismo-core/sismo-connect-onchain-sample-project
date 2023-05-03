@@ -5,11 +5,11 @@ import {
   SismoConnectResponse,
   AuthType,
 } from "@sismo-core/sismo-connect-react";
-import { ethers } from "ethers";
 import { useState } from "react";
 import { abi as AirdropLevel1ABI } from "../../abi/AirdropLevel1.json";
 import { transactions as AirdropLevel1Transactions } from "../../broadcast/AirdropLevel1.s.sol/80001/run-latest.json";
-import { devGroups } from "../../groups";
+import { account, devGroups, publicClient, walletClient } from "../../config";
+import { encodeAbiParameters, getContract } from "viem";
 
 export const sismoConnectConfig: SismoConnectClientConfig = {
   // you can create a new Sismo Connect app at https://factory.sismo.io
@@ -21,21 +21,11 @@ export const sismoConnectConfig: SismoConnectClientConfig = {
   },
 };
 
-type UserType = {
-  id: string;
-};
-
-// setup the provider and signer to interact with the contract deployed on a local fork
-const provider = new ethers.providers.JsonRpcProvider("http://localhost:8545");
-const signer = new ethers.Wallet(
-  "0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d"
-).connect(provider);
-
 export default function Level1ClaimAirdrop() {
   const [verifying, setVerifying] = useState(false);
   const [error, setError] = useState(null);
   const [userInput, setUserInput] = useState("");
-  const [verifiedUser, setVerifiedUser] = useState<UserType>(null);
+  const [verifiedUser, setVerifiedUser] = useState<{ id: string }>(null);
 
   // On text input change, we update the userInput react state variable
   function onUserInput(e) {
@@ -46,35 +36,43 @@ export default function Level1ClaimAirdrop() {
   async function verify(responseBytes: string) {
     // first we update the react state to show the loading state
     setVerifying(true);
+    setUserInput(localStorage.getItem("userInput") ?? account.address);
 
     // contract address of the AirdropLevel0 contract on the local anvil fork network
     // this contractAddress should be replaced with the correct address if the contract is deployed on a different network
     const contractAddress = AirdropLevel1Transactions.find(
       (tx) => tx.contractName == "AirdropLevel1"
     ).contractAddress as `0x${string}`;
-    const instance = new ethers.Contract(contractAddress, AirdropLevel1ABI, signer);
+    const contract = getContract({
+      address: contractAddress,
+      abi: AirdropLevel1ABI,
+      walletClient,
+      publicClient,
+    });
 
+    console.log("responseBytes", responseBytes);
     try {
-      console.log("responseBytes", responseBytes);
       // We send the response to the contract to verify the proof
-      const txReceipt = await (
-        await instance.claimWithSismoConnect(responseBytes, localStorage.getItem("userInput"), {
-          gasLimit: 20000000,
-        })
-      ).wait();
+      await contract.simulate.claimWithSismoConnect([
+        responseBytes,
+        localStorage.getItem("userInput") ?? account.address,
+      ]);
 
-      setUserInput(localStorage.getItem("userInput"));
+      const txHash = await contract.write.claimWithSismoConnect([
+        responseBytes,
+        localStorage.getItem("userInput") ?? account.address,
+      ]);
+
       localStorage.removeItem("userInput");
 
-      if (!txReceipt.status) {
-        const tx = await provider.getTransaction(txReceipt.hash);
-        // get error message from revert reason
-        const error = await provider.call(tx);
-      }
+      // sleep 2 seconds to wait for the tx to be mined
+      // before fetching the tx receipt
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      const receipt = await publicClient.getTransactionReceipt({ hash: txHash });
 
       // the UserId is the 4th topic of the event emitted by the contract
       // it is the tokenId of the NFT minted by the contract
-      const userId = txReceipt.logs[0].topics[3];
+      const userId = (receipt as { logs: { topics: string[] }[] }).logs[0].topics[3];
 
       // If the proof is valid, we update the user react state to show the user profile
       setVerifiedUser({
@@ -82,8 +80,14 @@ export default function Level1ClaimAirdrop() {
       });
     } catch (e) {
       // else if the tx is invalid, we show an error message
-      console.log(e);
-      setError("Airdrop already claimed!");
+      // it is either because the proof is invalid or because the user already claimed the airdrop
+      console.log("error", { ...e });
+      console.log("e.shortMessage", e.shortMessage);
+      e.shortMessage ===
+      'The contract function "claimWithSismoConnect" reverted with the following reason:\nERC721: token already minted'
+        ? setError("Airdrop already claimed!")
+        : setError(e.shortMessage);
+      localStorage.removeItem("userInput");
     } finally {
       // We set the loading state to false to show the user profile
       setVerifying(false);
@@ -102,16 +106,18 @@ export default function Level1ClaimAirdrop() {
               while proving you are a human.
             </p>
 
-            <div className="input-group">
-              <label htmlFor="userName">Address where you want to receive the airdrop</label>
-              <input
-                id="userName"
-                type="text"
-                value={userInput}
-                onChange={onUserInput}
-                disabled={verifying}
-              />
-            </div>
+            {!error && !verifiedUser && (
+              <div className="input-group">
+                <label htmlFor="userName">Address where you want to receive the airdrop</label>
+                <input
+                  id="userName"
+                  type="text"
+                  value={userInput}
+                  onChange={onUserInput}
+                  disabled={verifying}
+                />
+              </div>
+            )}
 
             {!error && (
               <SismoConnectButton
@@ -122,9 +128,13 @@ export default function Level1ClaimAirdrop() {
                 // by encoding it we will be able to decode it on chain
                 // TODO: make it not crash if the user type something instead of copy pasting directly
                 signature={{
-                  message: ethers.utils.defaultAbiCoder.encode(
-                    ["address"],
-                    [!userInput.match(/^0x[a-fA-F0-9]{40}$/) ? signer.address : userInput]
+                  message: encodeAbiParameters(
+                    [{ type: "address", name: "airdropAddress" }],
+                    [
+                      !userInput.match(/^0x[a-fA-F0-9]{40}$/)
+                        ? account.address
+                        : (userInput as `0x${string}`),
+                    ]
                   ),
                 }}
                 onResponseBytes={(responseBytes: string) => verify(responseBytes)}
@@ -132,10 +142,9 @@ export default function Level1ClaimAirdrop() {
                 callbackPath={"/level-1-claim-airdrop"}
               />
             )}
-            <h2>{error}</h2>
-            <p>{error && "(See your local anvil node)"}</p>
           </>
         )}
+
         {verifiedUser && (
           <>
             <h1>Airdrop claimed!</h1>
@@ -149,6 +158,16 @@ export default function Level1ClaimAirdrop() {
                 <p>Address used: {userInput}</p>
               </div>
             </div>
+          </>
+        )}
+
+        {error && (
+          <>
+            <h2>{error}</h2>
+            <p>
+              You can try again with another address or deploy again the contracts to restart (see
+              README)
+            </p>
           </>
         )}
       </div>
