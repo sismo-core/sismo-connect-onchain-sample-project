@@ -58,6 +58,13 @@ export const yourAddress = "0x855193BCbdbD346B423FF830b507CBf90ecCc90B"; // <---
 ...
 ```
 
+ℹ️ You will be able to mint each airdrop only once with the same eligible address. If you wish to test the airdrop flow multiple times, you will need to change your eligible address or deploy again the contracts with the following command:
+
+```bash
+# this will deploy the contracts again on your local blockchain
+yarn deploy-local
+```
+
 ### Run contract tests
 
 sismoConnectVerifier contracts are currently deployed on Goerli and Mumbai.

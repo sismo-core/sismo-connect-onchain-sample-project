@@ -81,10 +81,9 @@ export default function Level1ClaimAirdrop() {
         id: userId,
       });
     } catch (e) {
-      // else if the proof is invalid, we show an error message
-      const code = e.data?.replace("Reverted ", "");
-      let reason = ethers.utils.toUtf8String(code ? code : "0x00");
-      setError(reason);
+      // else if the tx is invalid, we show an error message
+      console.log(e);
+      setError("Airdrop already claimed!");
     } finally {
       // We set the loading state to false to show the user profile
       setVerifying(false);
@@ -114,24 +113,27 @@ export default function Level1ClaimAirdrop() {
               />
             </div>
 
-            <SismoConnectButton
-              config={sismoConnectConfig}
-              auths={[{ authType: AuthType.VAULT }]}
-              claims={[{ groupId: "0x682544d549b8a461d7fe3e589846bb7b" }]}
-              // we use the AbiCoder to encode the data we want to sign
-              // by encoding it we will be able to decode it on chain
-              // TODO: make it not crash if the user type something instead of copy pasting directly
-              signature={{
-                message: ethers.utils.defaultAbiCoder.encode(
-                  ["address"],
-                  [!userInput.match(/^0x[a-fA-F0-9]{40}$/) ? signer.address : userInput]
-                ),
-              }}
-              onResponseBytes={(responseBytes: string) => verify(responseBytes)}
-              verifying={verifying}
-              callbackPath={"/level-1-claim-airdrop"}
-            />
-            <>{error}</>
+            {!error && (
+              <SismoConnectButton
+                config={sismoConnectConfig}
+                auths={[{ authType: AuthType.VAULT }]}
+                claims={[{ groupId: "0x682544d549b8a461d7fe3e589846bb7b" }]}
+                // we use the AbiCoder to encode the data we want to sign
+                // by encoding it we will be able to decode it on chain
+                // TODO: make it not crash if the user type something instead of copy pasting directly
+                signature={{
+                  message: ethers.utils.defaultAbiCoder.encode(
+                    ["address"],
+                    [!userInput.match(/^0x[a-fA-F0-9]{40}$/) ? signer.address : userInput]
+                  ),
+                }}
+                onResponseBytes={(responseBytes: string) => verify(responseBytes)}
+                verifying={verifying}
+                callbackPath={"/level-1-claim-airdrop"}
+              />
+            )}
+            <h2>{error}</h2>
+            <p>{error && "(See your local anvil node)"}</p>
           </>
         )}
         {verifiedUser && (

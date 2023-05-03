@@ -44,6 +44,7 @@ export default function Level2ClaimAirdrop() {
   }
 
   async function verify(responseBytes: string) {
+    console.log("ok");
     // first we update the react state to show the loading state
     setVerifying(true);
     // contract address of the AirdropLevel0 contract on the local anvil fork network
@@ -52,9 +53,8 @@ export default function Level2ClaimAirdrop() {
       (tx) => tx.contractName == "AirdropLevel2"
     ).contractAddress as `0x${string}`;
     const instance = new ethers.Contract(contractAddress, AirdropLevel2ABI, signer);
-
+    console.log("responseBytes", responseBytes);
     try {
-      console.log("responseBytes", responseBytes);
       // We send the response to the contract to verify the proof
       const txReceipt = await (
         await instance.claimWithSismoConnect(responseBytes, localStorage.getItem("userInput"), {
@@ -64,6 +64,8 @@ export default function Level2ClaimAirdrop() {
 
       setUserInput(localStorage.getItem("userInput"));
       localStorage.removeItem("userInput");
+
+      console.log("txReceipt", txReceipt);
 
       if (!txReceipt.status) {
         const tx = await provider.getTransaction(txReceipt.hash);
@@ -75,15 +77,14 @@ export default function Level2ClaimAirdrop() {
       // it is the tokenId of the NFT minted by the contract
       const userId = txReceipt.logs[0].topics[3];
 
-      // If the proof is valid, we update the user react state to show the user profile
+      // If the tx is valid, we update the user react state to show the user profile
       setVerifiedUser({
         id: userId,
       });
     } catch (e) {
-      // else if the proof is invalid, we show an error message
-      const code = e.data?.replace("Reverted ", "");
-      let reason = ethers.utils.toUtf8String(code ? code : "0x00");
-      setError(reason);
+      // else if the tx is invalid, we show an error message
+      console.log(e);
+      setError("Airdrop already claimed!");
     } finally {
       // We set the loading state to false to show the user profile
       setVerifying(false);
@@ -113,30 +114,33 @@ export default function Level2ClaimAirdrop() {
               />
             </div>
 
-            <SismoConnectButton
-              config={sismoConnectConfig}
-              auths={[{ authType: AuthType.VAULT }]}
-              claims={[
-                { groupId: "0x682544d549b8a461d7fe3e589846bb7b" },
-                {
-                  groupId: "0x1cde61966decb8600dfd0749bd371f12",
-                  isOptional: true, // enable the user to selectively share its Gitcoin Passport
-                },
-              ]}
-              // we use the AbiCoder to encode the data we want to sign
-              // by encoding it we will be able to decode it on chain
-              // TODO: make it not crash if the user type something instead of copy pasting directly
-              signature={{
-                message: ethers.utils.defaultAbiCoder.encode(
-                  ["address"],
-                  [!userInput.match(/^0x[a-fA-F0-9]{40}$/) ? signer.address : userInput]
-                ),
-              }}
-              onResponseBytes={(responseBytes: string) => verify(responseBytes)}
-              verifying={verifying}
-              callbackPath={"/level-2-claim-airdrop"}
-            />
-            <>{error}</>
+            {!error && (
+              <SismoConnectButton
+                config={sismoConnectConfig}
+                auths={[{ authType: AuthType.VAULT }]}
+                claims={[
+                  { groupId: "0x682544d549b8a461d7fe3e589846bb7b" },
+                  {
+                    groupId: "0x1cde61966decb8600dfd0749bd371f12",
+                    isOptional: true, // enable the user to selectively share its Gitcoin Passport
+                  },
+                ]}
+                // we use the AbiCoder to encode the data we want to sign
+                // by encoding it we will be able to decode it on chain
+                // TODO: make it not crash if the user type something instead of copy pasting directly
+                signature={{
+                  message: ethers.utils.defaultAbiCoder.encode(
+                    ["address"],
+                    [!userInput.match(/^0x[a-fA-F0-9]{40}$/) ? signer.address : userInput]
+                  ),
+                }}
+                onResponseBytes={(responseBytes: string) => verify(responseBytes)}
+                verifying={verifying}
+                callbackPath={"/level-2-claim-airdrop"}
+              />
+            )}
+            <h2>{error}</h2>
+            <p>{error && "(See your local anvil node)"}</p>
           </>
         )}
         {verifiedUser && (

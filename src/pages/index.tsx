@@ -1,3 +1,4 @@
+import { exec } from "child_process";
 import { useRouter } from "next/router";
 
 export default function Home() {
