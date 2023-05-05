@@ -20,7 +20,7 @@ yarn
 forge install
 ```
 
-### Launch your local fork by working Mumbai with Anvil
+### Launch your local fork by forking Mumbai with Anvil
 
 ```bash
 # start a local blockchain with mumbai fork

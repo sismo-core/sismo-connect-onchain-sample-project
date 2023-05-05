@@ -41,9 +41,8 @@ contract AirdropLevel2 is
      */
     function claimWithSismoConnect(bytes memory response, address to) public returns (uint256) {
         ClaimRequest[] memory claims = new ClaimRequest[](2);
-        claims[0] = ClaimRequestBuilder.build({groupId: GROUP_ID});
-        claims[1] = ClaimRequestBuilder.build({groupId: GROUP_ID_2, isOptional: true});
-
+        claims[0] = buildClaim({groupId: GROUP_ID});
+        claims[1] = buildClaim({groupId: GROUP_ID_2});
 
         AuthRequest[] memory auths = new AuthRequest[](1);
         auths[0] = AuthRequestBuilder.build({authType: AuthType.VAULT});

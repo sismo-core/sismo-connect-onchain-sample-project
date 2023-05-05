@@ -36,19 +36,18 @@ export const devGroups = [
 // The chain configuration of the chain you want to fork
 // You don't need to change this
 export const mumbaiFork = {
-  id: 80_001,
-  name: "Fork Mumbai",
-  network: "mumbai",
+  id: 5151110,
+  name: "Fork Mumbai - Sismo",
+  network: "forkMumbaiSismo",
   nativeCurrency: { name: "MATIC", symbol: "MATIC", decimals: 18 },
   rpcUrls: {
     default: {
-      http: ["http://localhost:8545"],
+      http: ["http://127.0.0.1:8545"],
     },
     public: {
-      http: ["http://localhost:8545"],
+      http: ["http://127.0.0.1:8545"],
     },
   },
-  testnet: true,
 } as const satisfies Chain;
 
 // The private key of the second account of the local anvil network
@@ -62,11 +61,5 @@ export const account = privateKeyToAccount(
 // the wallet client is used to send transactions to the contract
 export const publicClient = createPublicClient({
   chain: mumbaiFork,
-  transport: http("http://localhost:8545"),
-});
-
-export const walletClient = createWalletClient({
-  account,
-  chain: mumbaiFork,
-  transport: http("http://localhost:8545"),
+  transport: http("http://127.0.0.1:8545"),
 });
