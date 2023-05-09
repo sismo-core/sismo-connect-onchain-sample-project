@@ -171,7 +171,7 @@ export default function Level2ClaimAirdrop() {
       // sleep 2 seconds to wait for the tx to be mined on the fork
       // before fetching the tx receipt
       await new Promise((resolve) => setTimeout(resolve, 2000));
-      const receipt = await publicClient.getTransactionReceipt({ hash: txHash });
+      const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
 
       // the UserId is the 4th topic of the event emitted by the contract
       // it is the tokenId of the NFT minted by the contract
