@@ -8,7 +8,7 @@ export default function Home() {
   return (
     <div className="container">
       <h1>
-        Getting Started
+        Sample Project
         <br />
         Sismo Connect Onchain
       </h1>
@@ -19,18 +19,20 @@ export default function Home() {
             <p>Sign an address with Sismo Connect where you wish to receive the airdrop</p>
           </li>
           <li onClick={() => router.push("/level-1-claim-airdrop")}>
-            <h3>Claim an airdrop gated to Humans (PoH)</h3>
+            <h3>Claim a gated airdrop anonymously</h3>
             <p>
               Sign an address with Sismo Connect where you wish to receive the airdrop while proving
-              that you have a Proof of Humanity profile
+              that you own a Nouns DAO NFT
             </p>
           </li>
           <li onClick={() => router.push("/level-2-claim-airdrop")}>
-            <h3>Claim an airdrop gated to Humans</h3>
-            <h3>(PoH or Gitcoin)</h3>
+            <h3>
+              Claim a gated airdrop anonymously <br />
+              while proving that you are human
+            </h3>
             <p>
               Sign an address with Sismo Connect where you wish to receive the airdrop while proving
-              that you have a Proof of Humanity profile and optionally a Gitcoin Passport
+              that you own a Nouns DAO NFT and a Gitcoin Passport
             </p>
           </li>
         </ul>

@@ -203,14 +203,16 @@ export default function Level2ClaimAirdrop() {
       <div className="container">
         {!verifiedUser && (
           <>
-            <h1>Are you a human?</h1>
-            <p style={{ marginBottom: 20 }}>
-              Level 2: Select on which address to receive the airdrop and sign it with Sismo Connect
-              while proving you are a human that optionally has a Gitcoin Passport.
-            </p>
+            <h1>Claim a gated airdrop anonymously while proving that you are a human</h1>
+            {!isAirdropAddressKnown && (
+              <p style={{ marginBottom: 20 }}>
+                Select on which address to receive the airdrop and sign it with Sismo Connect while
+                proving you are a human owning a Nouns DAO NFT
+              </p>
+            )}
 
             {isAirdropAddressKnown ? (
-              <p>You are connected with the address {account}</p>
+              <p style={{ marginBottom: 40 }}>You are connected with the address {account}</p>
             ) : (
               !error && (
                 <button className="connect-wallet-button" onClick={() => connectWallet()}>
@@ -224,8 +226,8 @@ export default function Level2ClaimAirdrop() {
                 config={sismoConnectConfig}
                 auths={[{ authType: AuthType.VAULT }]}
                 claims={[
-                  { groupId: "0x682544d549b8a461d7fe3e589846bb7b" },
-                  { groupId: "0x1cde61966decb8600dfd0749bd371f12" },
+                  { groupId: devGroups[0].groupId }, // Nouns DAO NFT Holders group
+                  { groupId: devGroups[1].groupId }, // Gitcoin Passport Holders group
                 ]}
                 // we use the AbiCoder to encode the data we want to sign
                 // by encoding it we will be able to decode it on chain
@@ -248,8 +250,7 @@ export default function Level2ClaimAirdrop() {
           <>
             <h1>Airdrop claimed!</h1>
             <p style={{ marginBottom: 20 }}>
-              The user has proved that he is a member of the Proof of Humanity group and that he may
-              have a Gitcoin Passport.
+              The user has proved that he owns a Nouns DAO NFT and a Gitcoin Passport
             </p>
             <div className="profile-container">
               <div>

@@ -203,14 +203,16 @@ export default function Level1ClaimAirdrop() {
       <div className="container">
         {!verifiedUser && (
           <>
-            <h1>Are you a human?</h1>
-            <p style={{ marginBottom: 20 }}>
-              Level 1: Select on which address to receive the airdrop and sign it with Sismo Connect
-              while proving you are a human.
-            </p>
+            <h1>Claim a gated airdrop anonymously</h1>
+            {!isAirdropAddressKnown && (
+              <p style={{ marginBottom: 20 }}>
+                Select on which address to receive the airdrop and sign it with Sismo Connect while
+                proving you own a Nouns DAO NFT.
+              </p>
+            )}
 
             {isAirdropAddressKnown ? (
-              <p>You are connected with the address {account}</p>
+              <p style={{ marginBottom: 40 }}>You are connected with the address {account}</p>
             ) : (
               !error && (
                 <button className="connect-wallet-button" onClick={() => connectWallet()}>
@@ -223,7 +225,7 @@ export default function Level1ClaimAirdrop() {
               <SismoConnectButton
                 config={sismoConnectConfig}
                 auths={[{ authType: AuthType.VAULT }]}
-                claims={[{ groupId: "0x682544d549b8a461d7fe3e589846bb7b" }]}
+                claims={[{ groupId: devGroups[0].groupId }]} // Nouns DAO NFT Holders group
                 // we use the AbiCoder to encode the data we want to sign
                 // by encoding it we will be able to decode it on chain
                 // TODO: make it not crash if the user type something instead of copy pasting directly
@@ -244,9 +246,7 @@ export default function Level1ClaimAirdrop() {
         {verifiedUser && (
           <>
             <h1>Airdrop claimed!</h1>
-            <p style={{ marginBottom: 20 }}>
-              The user has proved that he is a member of the Proof of Humanity group
-            </p>
+            <p style={{ marginBottom: 20 }}>The user has proved that he owns a Nouns DAO NFT</p>
             <div className="profile-container">
               <div>
                 <h2>NFT Claimed</h2>

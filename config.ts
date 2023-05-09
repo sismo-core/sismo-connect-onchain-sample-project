@@ -10,8 +10,8 @@ export const yourAddress = "0x855193BCbdbD346B423FF830b507CBf90ecCc90B"; // <---
 
 export const devGroups = [
   {
-    // Proof of Humanity group : https://factory.sismo.io/groups-explorer?search=0x682544d549b8a461d7fe3e589846bb7b
-    groupId: "0x682544d549b8a461d7fe3e589846bb7b",
+    // Nouns DAO NFT Holders group : https://factory.sismo.io/groups-explorer?search=0x311ece950f9ec55757eb95f3182ae5e2
+    groupId: "0x311ece950f9ec55757eb95f3182ae5e2",
     data: [
       // your address is added here so you can test the airdrops
       yourAddress,

@@ -203,12 +203,15 @@ export default function Level0ClaimAirdrop() {
         {!verifiedUser && (
           <>
             <h1 style={{ marginBottom: 10 }}>Claim an airdrop anonymously</h1>
-            <p style={{ marginBottom: 40 }}>
-              Level 0: Select on which address to receive the airdrop and sign it with Sismo Connect
-            </p>
+            {!isAirdropAddressKnown && (
+              <p style={{ marginBottom: 40 }}>
+                Select on which address you want to receive the airdrop and sign it with Sismo
+                Connect
+              </p>
+            )}
 
             {isAirdropAddressKnown ? (
-              <p>You are connected with the address {account}</p>
+              <p style={{ marginBottom: 40 }}>You are connected with the address {account}</p>
             ) : (
               !error && (
                 <button className="connect-wallet-button" onClick={() => connectWallet()}>

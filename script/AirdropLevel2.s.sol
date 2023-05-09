@@ -7,7 +7,7 @@ import {AirdropLevel2} from "contracts/AirdropLevel2.sol";
 
 contract DeployAirdropLevel2 is Script {
     bytes16 public constant APP_ID = 0xf4977993e52606cfd67b7a1cde717069;
-    bytes16 public constant GROUP_ID = 0x682544d549b8a461d7fe3e589846bb7b;
+    bytes16 public constant GROUP_ID = 0x311ece950f9ec55757eb95f3182ae5e2;
     bytes16 public constant GROUP_ID_2 = 0x1cde61966decb8600dfd0749bd371f12;
 
     function run() public {
