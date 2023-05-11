@@ -29,9 +29,8 @@ contract AirdropLevel0 is
      * @notice Claim a ERC721 on the address `to` thanks to a sismoConnect response containing a valid proof
      *         with respect to the auth and message signature requests
      * @param response the sismoConnect response from the Data Vault app in bytes
-     * @param to the address to mint the token to
      */
-    function claimWithSismoConnect(bytes memory response, address to) public returns (uint256) {
+    function claimWithSismoConnect(bytes memory response) public returns (uint256) {
         // the verify function will check that the sismoConnectResponse proof is cryptographically valid
         // with respect to the auth and message signature requests
         // i.e it checks that the user is the owner of a Sismo Data Vault
@@ -39,7 +38,7 @@ contract AirdropLevel0 is
         SismoConnectVerifiedResult memory result = verify({
             responseBytes: response,
             auth: buildAuth({authType: AuthType.VAULT}),
-            signature: buildSignature({message: abi.encode(to)})
+            signature: buildSignature({message: abi.encode(msg.sender)})
         });
 
         // if the proof is valid, we mint the token to the address `to`
@@ -47,7 +46,7 @@ contract AirdropLevel0 is
         // if the user calls the claimWithSismoConnect function multiple times
         // he will only be able to claim one token
         uint256 tokenId = result.getUserId(AuthType.VAULT);
-        _mint(to, tokenId);
+        _mint(msg.sender, tokenId);
 
         return tokenId;
     }

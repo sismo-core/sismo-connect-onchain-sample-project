@@ -24,8 +24,11 @@ export class DevRegistryTreeReader {
 
   public async getRegistryTree(): Promise<KVMerkleTree> {
     const poseidon = await buildPoseidon();
-    const registryTreeData = {};
+    const registryTreeData: { [key: string]: string } = {};
     for (const devGroup of this._devGroups) {
+      if (!devGroup.groupTimestamp) {
+        devGroup.groupTimestamp = "latest";
+      }
       const accountsTree = await this.getAccountsTree({
         groupId: devGroup.groupId,
       } as OffchainGetAccountsTreeInputs);
@@ -45,6 +48,9 @@ export class DevRegistryTreeReader {
     const poseidon = await buildPoseidon();
     const devGroup = this._devGroups.find((devGroup) => devGroup.groupId === groupId);
 
+    if (!devGroup) {
+      throw new Error(`Dev group ${groupId} not found`);
+    }
     let groupData = await this.getAccountsTreeData(devGroup);
 
     let _accountsTree = new KVMerkleTree(groupData, poseidon, 20);
@@ -54,7 +60,7 @@ export class DevRegistryTreeReader {
   protected async getAccountsTreeData(devGroup: DevGroup): Promise<MerkleTreeData> {
     let groupData: MerkleTreeData = {};
 
-    const devAddresses = devGroup?.data;
+    const devAddresses: DevAddresses = devGroup?.data;
 
     if (devAddresses?.length) {
       for (const key of devAddresses as string[]) {
@@ -63,10 +69,14 @@ export class DevRegistryTreeReader {
     }
 
     if (!devAddresses?.length) {
-      groupData = Object.keys(devAddresses).reduce((acc, key) => {
-        acc[key.toLowerCase()] = devAddresses[key];
+      groupData = (Object.keys(devAddresses) as string[]).reduce((acc: any, key: any) => {
+        acc[key.toLowerCase()] = devAddresses[key as keyof DevAddresses];
         return acc;
       }, {} as { [accountIdentifier: string]: number });
+    }
+
+    if (!devGroup.groupTimestamp) {
+      devGroup.groupTimestamp = "latest";
     }
 
     // allow to make sure that each AccountsTree is unique

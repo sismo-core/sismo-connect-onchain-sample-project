@@ -15,11 +15,11 @@ export default function Home() {
       <section>
         <ul>
           <li onClick={() => router.push("/level-0-claim-airdrop")}>
-            <h3>Claim an airdrop anonymously</h3>
+            <h3>Claim an airdrop</h3>
             <p>Sign an address with Sismo Connect where you wish to receive the airdrop</p>
           </li>
           <li onClick={() => router.push("/level-1-claim-airdrop")}>
-            <h3>Claim a gated airdrop anonymously</h3>
+            <h3>Claim a gated airdrop</h3>
             <p>
               Sign an address with Sismo Connect where you wish to receive the airdrop while proving
               that you own a Nouns DAO NFT

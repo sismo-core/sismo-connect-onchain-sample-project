@@ -381,11 +381,6 @@
         "internalType": "bytes",
         "name": "response",
         "type": "bytes"
-      },
-      {
-        "internalType": "address",
-        "name": "to",
-        "type": "address"
       }
     ],
     "name": "claimWithSismoConnect",
