@@ -45,9 +45,9 @@ contract AirdropLevel2 is
         claims[1] = buildClaim({groupId: GROUP_ID_2});
 
         AuthRequest[] memory auths = new AuthRequest[](1);
-        auths[0] = AuthRequestBuilder.build({authType: AuthType.VAULT});
+        auths[0] = buildAuth({authType: AuthType.VAULT});
 
-        SismoConnectRequest memory request = RequestBuilder.buildRequest({
+        SismoConnectRequest memory request = _requestBuilder.build({
           claims: claims,
           auths: auths,
           signature: buildSignature({message: abi.encode(to)}),
@@ -74,15 +74,15 @@ contract AirdropLevel2 is
         return tokenId;
     }
 
-    function transferFrom(address from, address to, uint256 tokenId) public virtual override {
+    function transferFrom(address, address, uint256) public virtual override {
         revert RegularERC721TransferFromAreNotAllowed();
     }
 
-    function safeTransferFrom(address from, address to, uint256 tokenId) public virtual override {
+    function safeTransferFrom(address, address, uint256) public virtual override {
         revert RegularERC721SafeTransferFromAreNotAllowed();
     }
 
-    function safeTransferFrom(address from, address to, uint256 tokenId, bytes memory _data)
+    function safeTransferFrom(address, address, uint256, bytes memory)
         public
         virtual
         override

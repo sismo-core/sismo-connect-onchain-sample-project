@@ -10,7 +10,7 @@ interface IAvailableRootsRegistry {
 
   function registerRoot(uint256 root) external;
 
-  function owner() external view virtual returns (address);
+  function owner() external view returns (address);
 }
 
 contract BaseTest is Test {

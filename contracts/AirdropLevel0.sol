@@ -52,15 +52,15 @@ contract AirdropLevel0 is
         return tokenId;
     }
 
-    function transferFrom(address from, address to, uint256 tokenId) public virtual override {
+    function transferFrom(address, address, uint256) public virtual override {
         revert RegularERC721TransferFromAreNotAllowed();
     }
 
-    function safeTransferFrom(address from, address to, uint256 tokenId) public virtual override {
+    function safeTransferFrom(address, address, uint256) public virtual override {
         revert RegularERC721SafeTransferFromAreNotAllowed();
     }
 
-    function safeTransferFrom(address from, address to, uint256 tokenId, bytes memory _data)
+    function safeTransferFrom(address, address, uint256, bytes memory)
         public
         virtual
         override

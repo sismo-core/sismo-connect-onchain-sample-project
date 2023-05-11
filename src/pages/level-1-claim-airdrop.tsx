@@ -153,11 +153,7 @@ export default function Level1ClaimAirdrop() {
     });
     console.log("responseBytes", responseBytes);
     try {
-      // We simulate the call to the contract to get the error if the tx is invalid
-      await contract.simulate.claimWithSismoConnect([responseBytes, account]);
-
-      // If the simulation is successful, we call the contract
-      const txHash = await walletClient.writeContract({
+      const txArgs = {
         address: contractAddress as any as never,
         abi: AirdropLevel1ABI as any as never,
         functionName: "claimWithSismoConnect" as any as never,
@@ -165,7 +161,12 @@ export default function Level1ClaimAirdrop() {
         account: account as any as never,
         chain: mumbaiFork as any as never,
         value: 0 as any as never,
-      });
+      };
+      // We simulate the call to the contract to get the error if the tx is invalid
+      await publicClient.simulateContract(txArgs);
+
+      // If the simulation is successful, we call the contract
+      const txHash = await walletClient.writeContract(txArgs);
 
       // sleep 2 seconds to wait for the tx to be mined on the fork
       // before fetching the tx receipt
