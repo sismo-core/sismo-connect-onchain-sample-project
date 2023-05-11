@@ -9,6 +9,7 @@ This repository aims at providing simple examples on how to integrate Sismo Conn
 - [Node.js](https://nodejs.org/en/download/) >= 18.15.0 (Latest LTS version)
 - [Yarn](https://classic.yarnpkg.com/en/docs/install)
 - [Foundry](https://book.getfoundry.sh/)
+- Metamask installed in your browser
 
 ### Install dependencies
 
@@ -22,6 +23,8 @@ forge install
 
 ### Launch your local fork by forking Mumbai with Anvil
 
+In a new terminal:
+
 ```bash
 # start a local blockchain with mumbai fork
 yarn anvil
@@ -31,6 +34,8 @@ yarn anvil
 
 ### Start your local Next.js app
 
+In a new terminal:
+
 ```bash
 # this will start your Next.js app
 # the frontend is available on http://localhost:3001/
@@ -39,8 +44,8 @@ yarn anvil
 yarn dev
 ```
 
-The frontend is now available on http://localhost:3001/ and the contracts have been deployed on your local blockchain.
-You can now experiment the user flow by going to your local frontend http://localhost:3001/.
+The frontend is now available on http://localhost:3000/ and the contracts have been deployed on your local blockchain.
+You can now experiment the user flow by going to your local frontend http://localhost:3000/.
 
 As you will see, the app showcase simple examples on how to create gated airdrops with Sismo Connect.
 To be eligible for the airdrops, you just need to add your address in [`./config.ts`](./config.ts):
@@ -58,6 +63,15 @@ export const yourAddress = "0x855193BCbdbD346B423FF830b507CBf90ecCc90B"; // <---
 # this will deploy the contracts again on your local blockchain
 yarn deploy-local
 ```
+
+### Important note
+
+The interaction with the fork network can become quite unstable if you stop the yarn anvil command at some point or if you already use the sample app before.
+If so:
+
+- keep the local anvil node running,
+- make sure to delete your activity tab for the fork network in Metamask by going to "Settings > Advanced > Clear activity tab data" when connected to the fork network.
+- relaunch the anvil node and the application
 
 ### Run contract tests
 
