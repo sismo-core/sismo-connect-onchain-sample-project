@@ -11,6 +11,14 @@ This repository aims at providing simple examples on how to integrate Sismo Conn
 - [Foundry](https://book.getfoundry.sh/)
 - Metamask installed in your browser
 
+### Clone the repository
+
+```bash
+# clone the repository
+git clone https://github.com/sismo-core/sismo-connect-onchain-sample-project.git
+cd sismo-connect-onchain-sample-project
+```
+
 ### Install dependencies
 
 ```bash
@@ -38,14 +46,16 @@ In a new terminal:
 
 ```bash
 # this will start your Next.js app
-# the frontend is available on http://localhost:3001/
-# it also starts a local backend
-# and deploys the contracts on the local blockchain
+# the frontend is available on http://localhost:3000/
+# it deploys the contracts on the local blockchain
 yarn dev
 ```
 
 The frontend is now available on http://localhost:3000/ and the contracts have been deployed on your local blockchain.
 You can now experiment the user flow by going to your local frontend http://localhost:3000/.
+If you wish to see the frontend code, you can go to the src/pages folder. The contracts code is in the contracts folder.
+
+### Be eligible for the airdrop
 
 As you will see, the app showcase simple examples on how to create gated airdrops with Sismo Connect.
 To be eligible for the airdrops, you just need to add your address in [`./config.ts`](./config.ts):
@@ -57,10 +67,12 @@ export const yourAddress = "0x855193BCbdbD346B423FF830b507CBf90ecCc90B"; // <---
 ...
 ```
 
-ℹ️ You will be able to mint each airdrop only once with the same eligible address. If you wish to test the airdrop flow multiple times, you will need to change your eligible address or deploy again the contracts with the following command:
+After changing the config file, you don't need to restart the app nor restart anvil, just refresh the page on the frontend and you are good to go.
+
+ℹ️ You will be able to mint each airdrop only once with the same eligible address. If you wish to test the airdrop flow multiple times, you will need to change your eligible address or manually deploy again the contracts with the following command:
 
 ```bash
-# this will deploy the contracts again on your local blockchain
+# this will deploy the contracts again on your local fork
 yarn deploy-local
 ```
 

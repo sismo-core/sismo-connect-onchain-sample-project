@@ -129,7 +129,7 @@ export const callContract = async ({
   const txArgs = {
     address: contractAddress as `0x${string}`,
     abi: abi,
-    functionName: "claimWithSismoConnect", // call the claimWithSismoConnect function
+    functionName: "claimWithSismo", // call the claimWithSismo function
     args: [responseBytes],
     account: account,
     chain: userChain,
@@ -162,9 +162,9 @@ export function handleVerifyErrors(e: any): any {
   let returnedError: string = (e as { shortMessage: string }).shortMessage;
   if (
     (e as { shortMessage: string }).shortMessage ===
-      'The contract function "claimWithSismoConnect" reverted with the following reason:\nERC721: transfer caller is not owner nor approved' ||
+      'The contract function "claimWithSismo" reverted with the following reason:\nERC721: transfer caller is not owner nor approved' ||
     (e as { shortMessage: string }).shortMessage ===
-      'The contract function "claimWithSismoConnect" reverted with the following reason:\nERC721: token already minted'
+      'The contract function "claimWithSismo" reverted with the following reason:\nERC721: token already minted'
   ) {
     returnedError = "Airdrop already claimed!";
   }

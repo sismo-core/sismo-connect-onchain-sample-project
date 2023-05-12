@@ -35,7 +35,7 @@ contract AirdropLevel1 is
      *         with respect to the auth,claim and message signature requests
      * @param response the sismoConnect response from the Data Vault app in bytes
      */
-    function claimWithSismoConnect(bytes memory response) public returns (uint256) {
+    function claimWithSismo(bytes memory response) public returns (uint256) {
         // the verify function will check that the sismoConnectResponse proof is cryptographically valid
         // with respect to the auth, claim and message signature requests
         // i.e it checks that the user is the owner of a Sismo Data Vault
@@ -51,7 +51,7 @@ contract AirdropLevel1 is
 
         // if the proof is valid, we mint the token to the address `to`
         // the tokenId is the anonymized userId of the user that claimed the token
-        // if the user calls the claimWithSismoConnect function multiple times
+        // if the user calls the claimWithSismo function multiple times
         // he will only be able to claim one token
         uint256 tokenId = result.getUserId(AuthType.VAULT);
         _mint(msg.sender, tokenId);

@@ -38,7 +38,7 @@ contract AirdropLevel2 is
      *         with respect to the auth,claims and message signature requests
      * @param response the sismoConnect response from the Data Vault app in bytes
      */
-    function claimWithSismoConnect(bytes memory response) public returns (uint256) {
+    function claimWithSismo(bytes memory response) public returns (uint256) {
         ClaimRequest[] memory claims = new ClaimRequest[](2);
         claims[0] = buildClaim({groupId: GROUP_ID});
         claims[1] = buildClaim({groupId: GROUP_ID_2});
@@ -65,7 +65,7 @@ contract AirdropLevel2 is
 
         // if the proof is valid, we mint the token to the address `to`
         // the tokenId is the anonymized userId of the user that claimed the token
-        // if the user calls the claimWithSismoConnect function multiple times
+        // if the user calls the claimWithSismo function multiple times
         // he will only be able to claim one token
         uint256 tokenId = result.getUserId(AuthType.VAULT);
         _mint(msg.sender, tokenId);

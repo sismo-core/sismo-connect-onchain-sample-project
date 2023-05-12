@@ -401,7 +401,7 @@
         "type": "bytes"
       }
     ],
-    "name": "claimWithSismoConnect",
+    "name": "claimWithSismo",
     "outputs": [
       {
         "internalType": "uint256",
