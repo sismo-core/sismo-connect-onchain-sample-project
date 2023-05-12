@@ -26,6 +26,7 @@ cd sismo-connect-onchain-sample-project
 yarn
 
 # install contract dependencies with Forge
+foundryup
 forge install
 ```
 
