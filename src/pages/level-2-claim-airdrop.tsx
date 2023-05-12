@@ -213,7 +213,7 @@ export default function ClaimAirdrop() {
 
         {error && (
           <>
-            <h2>{error}</h2>
+            <p className="error">{error}</p>
           </>
         )}
       </div>

@@ -1,6 +1,6 @@
 body {
   margin: 0;
-  font-family: Roboto-Medium, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+  font-family: Roboto-Regular, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
     "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -11,13 +11,14 @@ body {
 }
 
 html {
-  background: linear-gradient(285.51deg, #193970 -75.32%, #12203d 76.45%);
-  color: #ffffff;
+  /*  // background: linear-gradient(117.63deg, #0A1222 11.07%, #13203D 90.48%) url("/assets/sismo-landing-art.svg") no-repeat center center fixed; */
+  background: linear-gradient(117.63deg, #0a1222 11.07%, #13203d 90.48%);
+  color: #fffdf9;
 }
 
 p {
   margin: 0px;
-  color: white;
+  line-height: 21px;
 }
 
 a {
@@ -33,33 +34,23 @@ h5,
 h6 {
   margin: 0px;
   padding: 0px;
-  font-family: "Roboto-Medium";
+  font-family: "Roboto-Regular";
 }
 
 h1 {
-  font-size: 40px;
-  margin-bottom: 20px;
-  color: white;
+  font-size: 48px;
   text-align: center;
+  margin-bottom: 10px;
 }
 
 h2 {
-  font-size: 28px;
-  margin-bottom: 20px;
-  color: white;
+  font-size: 40px;
+  margin-bottom: 30px;
+  text-align: center;
 }
 
 h3 {
-  font-size: 20px;
-  margin-bottom: 5px;
-  color: white;
-}
-
-section {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 40px;
+  font-size: 24px;
 }
 
 ul {
@@ -72,26 +63,26 @@ ul {
   gap: 20px;
 }
 
+
 li {
+  list-style: none;
   position: relative;
   display: flex;
   flex-direction: column;
-
-  list-style: none;
   padding: 15px;
-  border-radius: 10px;
-  width: 500px;
+  border-radius: 0px;
+  width: 100%;
   height: 150px;
   cursor: pointer;
-
   transition: all 0.2s ease-in-out;
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(255, 253, 249, 0.5);
   backdrop-filter: blur(10px);
+  border-radius: 10px;
 }
 
 li:hover {
-  border: 1px solid rgba(255, 255, 255, 1);
-  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 253, 249, 1);
+  background-color: rgba(255, 253, 249, 0.1);
 }
 
 li:active {
@@ -102,13 +93,15 @@ li:before {
   position: absolute;
   top: 15px;
   right: 15px;
-  color: #12203d;
-  background-color: white;
-  width: 100px;
-  height: 20px;
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 70px;
+  height: 20px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #13203d;
+  background-color: rgba(255, 253, 249, 1);
   border-radius: 10px;
 }
 
@@ -135,7 +128,25 @@ li:after {
 }
 
 li:hover:after {
-  transform: translate(5px, 0px);
+  transform: translate(5px, 0px) scale(1.1);
+}
+
+input {
+  font-size: 20px;
+  font-family: "Roboto-Regular";
+  color: white;
+  width: 100%;
+  height: 53px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  background-color: transparent;
+  backdrop-filter: blur(20px);
+  padding: 0 10px;
+}
+
+input:focus {
+  outline: none;
+  border: 1px solid rgba(255, 255, 255, 1);
 }
 
 code {
@@ -144,92 +155,7 @@ code {
 
 label {
   font-size: 20px;
-  font-family: "Roboto-Medium";
   color: white;
-}
-
-input {
-  width: 500px;
-  height: 53px;
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  padding: 0 10px;
-  font-size: 20px;
-  font-family: "Roboto-Regular";
-  margin-bottom: 10px;
-  color: white;
-  background-color: transparent;
-}
-
-input:focus {
-  outline: none;
-  border: 1px solid rgba(255, 255, 255, 1);
-}
-
-.back-button {
-  position: absolute;
-  top: 50px;
-  left: 50px;
-  font-family: "Roboto-Medium";
-  font-size: 16px;
-  border-radius: 5px;
-  padding: 5px;
-}
-
-.input-group {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  margin-bottom: 40px;
-  gap: 10px;
-}
-
-.container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  max-width: 700px;
-  margin: 0 auto;
-  min-height: 100vh;
-}
-
-.profile-container {
-  display: flex;
-  flex-direction: column;
-
-  width: 700px;
-  padding: 20px;
-  border: 1px solid white;
-  border-radius: 10px;
-  background-color: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-}
-
-.connect-wallet-button {
-  display: inline-block;
-  padding: 10px 20px;
-  font-size: 16px;
-  font-weight: bold;
-  text-align: center;
-  color: #000;
-  background-color: #fff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.disconnect-wallet-button {
-  display: inline-block;
-  padding: 10px 20px;
-  font-size: 12px;
-  font-weight: bold;
-  text-align: center;
-  color: #000;
-  background-color: #fff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
 }
 
 @font-face {
