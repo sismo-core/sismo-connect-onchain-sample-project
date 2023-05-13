@@ -102,3 +102,10 @@ forge test --fork-url https://rpc.ankr.com/polygon_mumbai
 # you can aslo use the rpc url you want by passing an environment variable
 forge test --fork-url $RPC_URL
 ```
+
+⚠️ Important note
+
+If you deployed your contracts on testnets (Goerli or Mumbai) and want to test it, you need to **keep the devMode enabled**.
+(You are however free to remove the devGroups).
+
+DevMode allows Sismo Connect to redirect you to the Developer Data Vault (a special Data Vault used only for development)
