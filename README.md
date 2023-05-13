@@ -105,7 +105,6 @@ forge test --fork-url $RPC_URL
 
 ⚠️ Important note
 
-If you deployed your contracts on testnets (Goerli or Mumbai) and want to test it, you need to **keep the devMode enabled**.
-(You are however free to remove the devGroups).
+If you deployed your contracts on testnets (Goerli or Mumbai) and want to test it, you need to **keep the devMode enabled** but **remove the devGroups**.
 
 DevMode allows Sismo Connect to redirect you to the Developer Data Vault (a special Data Vault used only for development)
