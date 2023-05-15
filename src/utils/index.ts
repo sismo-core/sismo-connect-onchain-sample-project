@@ -81,40 +81,12 @@ export const switchNetwork = async (userChain: Chain) => {
   }
 };
 
-export const requestAccounts = async (): Promise<`0x${string}`> => {
-  await window.ethereum.request({
-    method: "eth_requestAccounts",
-  });
-  const permissions = await window.ethereum.request({
-    method: "wallet_requestPermissions",
-    params: [
-      {
-        eth_accounts: {},
-      },
-    ],
-  });
-  const address = permissions[0].caveats[0].value[0];
-
-  // give user fake fork tokens
-  const walletClient = createWalletClient({
-    chain: mumbaiFork,
-    transport: http(),
-    account,
-  });
-  await walletClient.sendTransaction({
-    to: address,
-    value: parseEther("5"),
-  });
-
-  return address;
-};
-
 export const callContract = async ({
   contractAddress,
   responseBytes,
   abi,
   userChain,
-  account,
+  address,
   publicClient,
   walletClient,
 }: {
@@ -122,7 +94,7 @@ export const callContract = async ({
   responseBytes: string;
   abi: any;
   userChain: Chain;
-  account: `0x${string}`;
+  address: `0x${string}`;
   publicClient: PublicClient;
   walletClient: WalletClient;
 }): Promise<string> => {
@@ -131,7 +103,7 @@ export const callContract = async ({
     abi: abi,
     functionName: "claimWithSismo", // call the claimWithSismo function
     args: [responseBytes],
-    account: account,
+    account: address,
     chain: userChain,
   };
 
@@ -147,10 +119,10 @@ export const callContract = async ({
   return tokenId;
 };
 
-export const signMessage = (account: string) => {
+export const signMessage = (address: `0x${string}` | undefined) => {
   return encodeAbiParameters(
     [{ type: "address", name: "airdropAddress" }],
-    [account as `0x${string}`]
+    [address as `0x${string}`]
   );
 };
 

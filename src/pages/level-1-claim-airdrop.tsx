@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import {
   switchNetwork,
   mumbaiFork,
-  requestAccounts,
   getPublicClient,
   handleVerifyErrors,
   callContract,
@@ -12,6 +11,7 @@ import {
 import { transactions } from "../../broadcast/AirdropLevel1.s.sol/5151110/run-latest.json";
 import { abi } from "../../abi/AirdropLevel1.json";
 import { createWalletClient, http, custom, WalletClient, PublicClient } from "viem";
+import { useAccount, useConnect, useDisconnect } from "wagmi";
 import BackButton from "../components/BackButton";
 import {
   SismoConnectButton,
@@ -44,14 +44,11 @@ export const sismoConnectConfig: SismoConnectClientConfig = {
 };
 
 export default function ClaimAirdrop() {
+  const [isReady, setIsReady] = useState(false);
   const [appState, setAppState] = useState<APP_STATES>(APP_STATES.init);
   const [responseBytes, setResponseBytes] = useState<string>("");
-  const [error, setError] = useState<string>("");
+  const [contractError, setContractError] = useState<string>("");
   const [tokenId, setTokenId] = useState<{ id: string }>();
-  const [account, setAccount] = useState<`0x${string}`>(
-    "0x70997970C51812dc3A010C7d01b50e0d17dc79C8"
-  );
-  const [isAirdropAddressKnown, setIsAirdropAddressKnown] = useState<boolean>(false);
   const [walletClient, setWalletClient] = useState<WalletClient>(
     createWalletClient({
       chain: userChain,
@@ -59,6 +56,10 @@ export default function ClaimAirdrop() {
     }) as WalletClient
   );
   const publicClient: PublicClient = getPublicClient(userChain);
+
+  const { address, isConnected } = useAccount();
+  const { connect, connectors, error, isLoading, pendingConnector } = useConnect();
+  const { disconnect } = useDisconnect();
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -70,20 +71,11 @@ export default function ClaimAirdrop() {
         }),
       }) as WalletClient
     );
+  }, [address]);
 
-    setIsAirdropAddressKnown(localStorage.getItem("airdropAddress") ? true : false);
-    if (isAirdropAddressKnown) {
-      setAccount(localStorage.getItem("airdropAddress") as `0x${string}`);
-    }
-  }, [isAirdropAddressKnown]);
-
-  async function connectWallet() {
-    router.push("/level-1-claim-airdrop");
-    const address = await requestAccounts();
-    localStorage.setItem("airdropAddress", address);
-    setAccount(address);
-    setIsAirdropAddressKnown(true);
-  }
+  // solves hydration errors with wagmi
+  useEffect(() => setIsReady(true), []);
+  if (!isReady) return null;
 
   function setResponse(responseBytes: string) {
     setResponseBytes(responseBytes);
@@ -106,17 +98,16 @@ export default function ClaimAirdrop() {
         responseBytes,
         abi,
         userChain,
-        account,
+        address: address as `0x${string}`,
         publicClient,
         walletClient,
       });
       // If the proof is valid, we update the user react state to show the tokenId
       setTokenId({ id: tokenId });
     } catch (e) {
-      setError(handleVerifyErrors(e));
+      setContractError(handleVerifyErrors(e));
     } finally {
       setAppState(APP_STATES.init);
-      localStorage.removeItem("airdropAddress");
     }
   }
 
@@ -127,21 +118,35 @@ export default function ClaimAirdrop() {
         {!tokenId && (
           <>
             <h1 style={{ marginBottom: 10 }}>Claim a gated airdrop to Nouns DAO NFT holders</h1>
-            {!isAirdropAddressKnown && (
+            {!isConnected && (
               <p style={{ marginBottom: 40 }}>
                 Select on which address you want to receive the airdrop and sign it with Sismo
                 Connect
               </p>
             )}
 
-            {isAirdropAddressKnown ? (
-              <p style={{ marginBottom: 40 }}>You will receive the airdrop on {account}</p>
+            {isConnected && isReady ? (
+              <p style={{ marginBottom: 40 }}>You will receive the airdrop on {address}</p>
             ) : (
-              !error && (
-                <button className="connect-wallet-button" onClick={() => connectWallet()}>
-                  Connect Wallet
-                </button>
-              )
+              <div>
+                {connectors.map((connector) => (
+                  <button
+                    disabled={!connector.ready}
+                    key={connector.id}
+                    onClick={() => {
+                      router.push("/level-1-claim-airdrop");
+                      connect({ connector });
+                    }}
+                    className="wallet-button"
+                  >
+                    Connect Wallet
+                    {!connector.ready && " (unsupported)"}
+                    {isLoading && connector.id === pendingConnector?.id && " (connecting)"}
+                  </button>
+                ))}
+
+                {error && <div>{error.message}</div>}
+              </div>
             )}
 
             {
@@ -153,8 +158,8 @@ export default function ClaimAirdrop() {
               // - onResponseBytes: the callback that will be called when the user is redirected back from the his Sismo Vault to the Sismo Connect App with the Sismo Connect response as bytes
               // You can see more information about the Sismo Connect button in the Sismo Connect documentation: https://docs.sismo.io/build-with-sismo-connect/technical-documentation/react
             }
-            {!error &&
-              isAirdropAddressKnown &&
+            {!contractError &&
+              isConnected &&
               appState != APP_STATES.receivedProof &&
               appState != APP_STATES.claimingNFT && (
                 <SismoConnectButton
@@ -164,9 +169,9 @@ export default function ClaimAirdrop() {
                   // here we want the proof of a Sismo Vault ownership from our users
                   auth={{ authType: AuthType.VAULT }}
                   claim={{ groupId: devGroups[0].groupId }}
-                  // we use the AbiCoder to encode the data we want to sign
-                  // by encoding it we will be able to decode it on chain
-                  signature={{ message: signMessage(account) }}
+                  // we ask the user to sign a message
+                  // it will be used onchain to prevent front running
+                  signature={{ message: signMessage(address) }}
                   // onResponseBytes calls a 'setResponse' function with the responseBytes returned by the Sismo Vault
                   onResponseBytes={(responseBytes: string) => setResponse(responseBytes)}
                   // Some text to display on the button
@@ -177,7 +182,7 @@ export default function ClaimAirdrop() {
             {/** Simple button to call the smart contract with the response as bytes */}
             {appState == APP_STATES.receivedProof && (
               <button
-                className="connect-wallet-button"
+                className="wallet-button"
                 onClick={async () => {
                   await claimWithSismo(responseBytes);
                 }}
@@ -203,18 +208,32 @@ export default function ClaimAirdrop() {
               <div>
                 <h2>NFT Claimed</h2>
                 <b>tokenId: {tokenId?.id}</b>
-                <p>Address used: {account}</p>
+                <p>Address used: {address}</p>
               </div>
             </div>
           </>
         )}
 
-        {error && (
+        {contractError !== "" && (
           <>
-            <h2>{error}</h2>
+            <h2>{contractError}</h2>
           </>
         )}
       </div>
+
+      {isConnected && (
+        <button
+          className="wallet-button wallet-button-disconnect"
+          onClick={() => {
+            disconnect();
+            setTokenId(undefined);
+            setContractError("");
+            setAppState(APP_STATES.init);
+          }}
+        >
+          Disconnect
+        </button>
+      )}
     </>
   );
 }
